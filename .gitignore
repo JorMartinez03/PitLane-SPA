@@ -26,3 +26,5 @@ dist-ssr
 .vercel
 # Word temp files
 ~$*
+# Agentes de opencode
+.agents/
