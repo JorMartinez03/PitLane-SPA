@@ -18,15 +18,15 @@ title.alignment = WD_ALIGN_PARAGRAPH.CENTER
 # ── SUBTITLE ──
 sub = doc.add_paragraph()
 sub.alignment = WD_ALIGN_PARAGRAPH.CENTER
-run = sub.add_run('Documentación Técnica de la Aplicación\nCalendario de Fórmula 1, F2 y F3')
+run = sub.add_run('Documentación Técnica de la Aplicación\nCalendario de F1, F2, F3 y Categorías Adicionales')
 run.bold = True
 run.font.size = Pt(13)
 
 info = doc.add_paragraph()
 info.alignment = WD_ALIGN_PARAGRAPH.CENTER
-info.add_run('Versión: Alpha 0.1.0\n').bold = True
-info.add_run('Fecha: 04/06/2026\n')
-info.add_run('Framework: React 19 + Vite 8 + Tailwind CSS v4\n')
+info.add_run('Versión: Alpha 0.2.0\n').bold = True
+info.add_run('Fecha: 15/06/2026\n')
+info.add_run('Framework: React 19 + Vite 8 + Tailwind CSS v4 + React Router\n')
 info.add_run('Deploy: Vercel (https://pitlane-spa.vercel.app)')
 
 doc.add_paragraph('═' * 60)
@@ -59,9 +59,11 @@ doc.add_heading('1. Introducción', level=1)
 p = doc.add_paragraph()
 p.add_run(
     'PitLane es una Single Page Application (SPA) en fase Alpha que muestra el '
-    'calendario de carreras de Fórmula 1, F2 y F3 para la temporada 2026. '
+    'calendario de carreras de Fórmula 1, F2, F3 y categorías adicionales '
+    '(IndyCar, NASCAR, WEC, MotoGP) para la temporada 2026. '
     'Está diseñada con una arquitectura escalable y desacoplada, inspirada '
-    'visualmente en el sitio oficial formula1.com. Actualmente desplegada '
+    'visualmente en el sitio oficial formula1.com. Utiliza React Router para '
+    'la navegación entre páginas. Actualmente desplegada '
     'automáticamente en Vercel desde GitHub.'
 )
 doc.add_paragraph('Objetivos principales:', style='List Bullet')
@@ -69,6 +71,8 @@ for obj in [
     'Mostrar el calendario completo de carreras organizado por categoría.',
     'Destacar dinámicamente la próxima carrera según la fecha actual.',
     'Permitir filtrar entre F1, F2 y F3 sin recargar la página.',
+    'Ofrecer calendarios de categorías adicionales (IndyCar, NASCAR, WEC, MotoGP).',
+    'Navegación mediante React Router con rutas dedicadas.',
     'Mantener el código desacoplado para migrar fácilmente a una API real.',
     'Despliegue automático en Vercel con cada push a GitHub.',
 ]:
@@ -87,17 +91,22 @@ SPA Alpha/
   src/
     main.jsx                # Renderiza React en el DOM
     index.css               # Estilos globales + tema Tailwind v4
-    App.jsx                 # Componente raíz
+    App.jsx                 # Componente raíz con React Router
     data/
-      races.js              # Datos estáticos de 48 carreras (F1, F2, F3)
+      races.js              # Datos estáticos de 71 carreras (7 categorías)
     hooks/
       useCalendar.js        # Custom Hook: estado + lógica + filtrado
     components/
+      CategoryCard.jsx      # Card de categoría con gradiente y enlace
       F1Dashboard.jsx       # Orquestador: layout principal y loading
       CategoryNav.jsx       # Barra de navegación F1 / F2 / F3
       Hero.jsx              # Banner de la próxima carrera
       CalendarGrid.jsx      # Grid responsivo de tarjetas
       RaceCard.jsx          # Tarjeta individual de carrera
+    pages/
+      HomePage.jsx          # Página principal con cards de categorías
+      CalendarPage.jsx      # Página de calendario por categoría
+      ExtrasPage.jsx        # Página de categorías adicionales
 """
 for line in tree.strip().split('\n'):
     doc.add_paragraph(line)
@@ -109,8 +118,8 @@ doc.add_paragraph('La aplicación sigue un flujo unidireccional de datos:')
 doc.add_heading('3.1 Capa de Datos', level=2)
 doc.add_paragraph('Archivo: src/data/races.js')
 doc.add_paragraph(
-    'Contiene un array de 48 objetos con la información de todas las carreras '
-    'de la temporada 2026. Cada objeto tiene la siguiente estructura:'
+    'Contiene un array de 71 objetos con la información de todas las carreras '
+    'de la temporada 2026 para 7 categorías. Cada objeto tiene la siguiente estructura:'
 )
 code = doc.add_paragraph()
 code.style = doc.styles['Normal']
@@ -120,7 +129,7 @@ run = code.add_run(
     '  name: "Gran Premio de España",     # Nombre de la carrera\n'
     '  circuit: "Circuit de Barcelona",   # Nombre del circuito\n'
     '  date: "2026-06-01",               # Fecha en formato ISO\n'
-    '  category: "F1",                    # Categoría: F1, F2 o F3\n'
+    '  category: "F1",                    # Categoría: F1, F2, F3, IndyCar, NASCAR, WEC o MotoGP\n'
     '  status: "upcoming"                 # Estado calculado\n'
     '}'
 )
@@ -132,7 +141,7 @@ doc.add_paragraph('Archivo: src/hooks/useCalendar.js')
 doc.add_paragraph(
     'Este es el núcleo de la aplicación. Centraliza toda la lógica de estado '
     'y simula una petición asíncrona. Al migrar a producción, solo se modifica '
-    'este archivo.'
+    'este archivo. Acepta un parámetro initialCategory para definir la categoría inicial.'
 )
 doc.add_paragraph('Funciones principales:')
 for fn in [
@@ -149,7 +158,7 @@ for val in [
     'races: Carreras filtradas por categoría activa',
     'allRaces: Todas las carreras sin filtrar',
     'loading: Booleano de estado de carga',
-    'activeCategory: Categoría seleccionada (F1, F2, F3)',
+    'activeCategory: Categoría seleccionada',
     'setActiveCategory: Función para cambiar de categoría',
     'nextRace: Objeto de la próxima carrera',
     'pastRaces: Array de carreras pasadas',
@@ -163,25 +172,87 @@ doc.add_paragraph(
     'No contienen lógica de negocio ni acceso directo a datos.'
 )
 
+doc.add_heading('3.4 Enrutamiento (React Router)', level=2)
+doc.add_paragraph(
+    'La aplicación utiliza react-router-dom para la navegación entre páginas '
+    'con las siguientes rutas:'
+)
+routes = [
+    ('/ — HomePage', 'Página principal con cards de categorías (F1, F2, F3, Más Categorías)'),
+    ('/calendar/:category — CalendarPage', 'Calendario para una categoría específica (F1, F2, F3, IndyCar, NASCAR, WEC, MotoGP)'),
+    ('/extras — ExtrasPage', 'Categorías adicionales (IndyCar, NASCAR, WEC, MotoGP)'),
+]
+for route, desc in routes:
+    p = doc.add_paragraph()
+    run = p.add_run(f'{route}: ')
+    run.bold = True
+    p.add_run(desc)
+
 # ── 4. COMPONENTES ──
 doc.add_heading('4. Descripción de Componentes', level=1)
 
-doc.add_heading('4.1 F1Dashboard (Orquestador)', level=2)
-doc.add_paragraph('Archivo: src/components/F1Dashboard.jsx')
-doc.add_paragraph(
-    'Componente principal que orquesta toda la aplicación. Consume useCalendar '
-    'y distribuye los datos a los componentes hijos. Incluye:'
-)
+doc.add_heading('4.1 CategoryCard', level=2)
+doc.add_paragraph('Archivo: src/components/CategoryCard.jsx')
+doc.add_paragraph('Componente reutilizable de card para cada categoría:')
 for item in [
-    'Header sticky con logo PitLane',
-    'Loading skeleton animado mientras se cargan los datos',
-    'CategoryNav, Hero y CalendarGrid en el main',
-    'Footer con créditos de fase Alpha',
-    'Efecto de vidrio (backdrop-blur-md) en el header',
+    'Gradiente de fondo único por categoría (rojo F1, azul F2, verde F3, índigo IndyCar, ámbar NASCAR, púrpura WEC, naranja MotoGP)',
+    'Efecto de elevación al hover (hover:-translate-y-1)',
+    'Círculos decorativos con blur-3xl para profundidad',
+    'Enlace de navegación al calendario correspondiente mediante React Router Link',
+    'Muestra el número de carreras disponibles para esa categoría',
+    'Botón "Ver calendario" con flecha animada al hover',
 ]:
     doc.add_paragraph(item, style='List Bullet')
 
-doc.add_heading('4.2 CategoryNav (Navegación de Categorías)', level=2)
+doc.add_heading('4.2 HomePage (Página Principal)', level=2)
+doc.add_paragraph('Archivo: src/pages/HomePage.jsx')
+doc.add_paragraph('Página principal que lista todas las categorías:')
+for item in [
+    'Header con logo PitLane y navegación',
+    'Sección "Categorías Principales" con cards de F1, F2 y F3',
+    'Sección "Otras Series" con card "Más Categorías" que muestra etiquetas de IndyCar, NASCAR, WEC, MotoGP',
+    'Enlace a /extras para explorar las categorías adicionales',
+    'Diseño responsivo con grid adaptable',
+    'Footer con créditos de fase Alpha',
+]:
+    doc.add_paragraph(item, style='List Bullet')
+
+doc.add_heading('4.3 CalendarPage (Página de Calendario)', level=2)
+doc.add_paragraph('Archivo: src/pages/CalendarPage.jsx')
+doc.add_paragraph(
+    'Extrae la categoría de los parámetros de la URL (/calendar/:category) '
+    'y renderiza el componente F1Dashboard con esa categoría.'
+)
+
+doc.add_heading('4.4 ExtrasPage (Categorías Adicionales)', level=2)
+doc.add_paragraph('Archivo: src/pages/ExtrasPage.jsx')
+doc.add_paragraph('Página que lista las categorías adicionales disponibles:')
+for item in [
+    'Cards individuales para IndyCar Series, NASCAR Cup Series, WEC y MotoGP',
+    'Cada card enlaza a su calendario específico (/calendar/IndyCar, etc.)',
+    'Header con enlace de vuelta a la página principal',
+    'Footer con créditos de fase Alpha',
+]:
+    doc.add_paragraph(item, style='List Bullet')
+
+doc.add_heading('4.5 F1Dashboard (Orquestador)', level=2)
+doc.add_paragraph('Archivo: src/components/F1Dashboard.jsx')
+doc.add_paragraph(
+    'Componente principal que orquesta el calendario. Consume useCalendar '
+    'con la categoría recibida como prop y distribuye los datos a los componentes hijos:'
+)
+for item in [
+    'Header sticky con logo PitLane y enlace "← Categorías" para volver atrás',
+    'Barra de navegación CategoryNav para categorías principales (F1/F2/F3)',
+    'Badge de categoría para categorías no principales (IndyCar, NASCAR, etc.)',
+    'Loading skeleton animado mientras se cargan los datos',
+    'Hero, CalendarGrid y estadísticas en el main',
+    'Footer con créditos de fase Alpha',
+    'Navegación entre categorías usando useNavigate de React Router',
+]:
+    doc.add_paragraph(item, style='List Bullet')
+
+doc.add_heading('4.6 CategoryNav (Navegación de Categorías)', level=2)
 doc.add_paragraph('Archivo: src/components/CategoryNav.jsx')
 doc.add_paragraph('Barra de filtros interactiva con los botones F1, F2 y F3:')
 for item in [
@@ -189,10 +260,11 @@ for item in [
     'Los botones inactivos muestran texto plateado que se ilumina al hover',
     'Animación suave de 200ms en todas las transiciones',
     'Sombra roja (shadow-lg shadow-f1-red/30) en el botón activo',
+    'Al hacer clic, navega a la ruta de la categoría seleccionada',
 ]:
     doc.add_paragraph(item, style='List Bullet')
 
-doc.add_heading('4.3 Hero (Próxima Carrera)', level=2)
+doc.add_heading('4.7 Hero (Próxima Carrera)', level=2)
 doc.add_paragraph('Archivo: src/components/Hero.jsx')
 doc.add_paragraph('Banner destacado que muestra la próxima carrera del calendario:')
 for item in [
@@ -205,7 +277,7 @@ for item in [
 ]:
     doc.add_paragraph(item, style='List Bullet')
 
-doc.add_heading('4.4 RaceCard (Tarjeta de Carrera)', level=2)
+doc.add_heading('4.8 RaceCard (Tarjeta de Carrera)', level=2)
 doc.add_paragraph('Archivo: src/components/RaceCard.jsx')
 doc.add_paragraph('Tarjeta individual para cada carrera con animaciones:')
 for item in [
@@ -218,7 +290,7 @@ for item in [
 ]:
     doc.add_paragraph(item, style='List Bullet')
 
-doc.add_heading('4.5 CalendarGrid (Grid de Calendario)', level=2)
+doc.add_heading('4.9 CalendarGrid (Grid de Calendario)', level=2)
 doc.add_paragraph('Archivo: src/components/CalendarGrid.jsx')
 for item in [
     'grid-cols-1: 1 columna en móviles',
@@ -247,7 +319,8 @@ for name, hex_val, desc in colors:
 
 doc.add_paragraph(
     'También se definió la fuente Inter como tipografía principal importada '
-    'desde Google Fonts en el index.html.'
+    'desde Google Fonts en el index.html. '
+    'Los gradientes de las CategoryCard se definen inline con Tailwind (from-{color}-500 to-{color}-700).'
 )
 
 # ── 6. FLUJO ──
@@ -256,18 +329,19 @@ doc.add_paragraph('El flujo completo de la aplicación es el siguiente:')
 steps = [
     'El usuario abre la aplicación en el navegador.',
     'main.jsx monta el componente App en el DOM.',
-    'App renderiza F1Dashboard.',
-    'F1Dashboard ejecuta useCalendar().',
+    'App renderiza el Router con las rutas definidas.',
+    'La ruta "/" muestra HomePage con las cards de categorías.',
+    'El usuario hace clic en una categoría (ej. F1).',
+    'React Router navega a "/calendar/F1".',
+    'CalendarPage detecta el parámetro :category y renderiza F1Dashboard.',
+    'F1Dashboard ejecuta useCalendar("F1").',
     'useCalendar inicia la carga asíncrona simulada.',
     'Loading skeleton se muestra durante 600ms.',
     'Los datos se cargan y se almacenan en el estado.',
-    'Se filtran las carreras por la categoría activa (F1 por defecto).',
+    'Se filtran las carreras por la categoría activa.',
     'Se detecta la próxima carrera por fecha.',
-    'Se renderizan CategoryNav, Hero y CalendarGrid.',
-    'El usuario hace clic en F2 o F3.',
-    'setActiveCategory actualiza el estado.',
-    'useMemo recalcula filteredRaces automáticamente.',
-    'Los componentes se re-renderizan con los nuevos datos.',
+    'Se renderizan Hero y CalendarGrid.',
+    'El usuario puede cambiar de categoría (F1/F2/F3) desde el nav, o volver a inicio con "← Categorías".',
 ]
 for i, step in enumerate(steps, 1):
     doc.add_paragraph(f'{i}. {step}')
@@ -293,8 +367,9 @@ for item in [
 doc.add_heading('7.2 Adición de nuevas categorías', level=2)
 for item in [
     'Agregar nuevas carreras al array en races.js.',
-    'Añadir el nuevo valor al array CATEGORIES en CategoryNav.jsx.',
-    'Opcional: agregar un color en CATEGORY_COLORS.',
+    'Agregar la categoría a HomePage.jsx o ExtrasPage.jsx según corresponda.',
+    'Opcional: agregar un gradiente en el objeto GRADIENTS de CategoryCard.jsx.',
+    'Para que aparezca en el nav de F1Dashboard, agregarla al array MAIN_CATEGORIES.',
 ]:
     doc.add_paragraph(item, style='List Bullet')
 
@@ -326,8 +401,9 @@ for cmd, desc in commands:
 doc.add_heading('9. Dependencias Principales', level=1)
 doc.add_heading('Producción:', level=2)
 for dep in [
-    'react ^19.2.6       Biblioteca principal de UI',
-    'react-dom ^19.2.6   Renderizado en el DOM',
+    'react ^19.2.6             Biblioteca principal de UI',
+    'react-dom ^19.2.6         Renderizado en el DOM',
+    'react-router-dom ^6.x     Enrutamiento y navegación',
 ]:
     doc.add_paragraph(dep, style='List Bullet')
 
@@ -368,6 +444,7 @@ doc.add_heading('10.3 Historial de Versiones', level=2)
 versions = [
     ('Alpha 0.0.1 (04/06/2026)', 'Versión inicial con datos locales, 3 categorías, animaciones CSS.'),
     ('Alpha 0.1.0 (04/06/2026)', 'Configuración de Vercel, deploy automático, fix de Tailwind CSS v4.'),
+    ('Alpha 0.2.0 (15/06/2026)', 'Página principal con cards de categorías, React Router, categorías adicionales (IndyCar, NASCAR, WEC, MotoGP).'),
 ]
 for ver, desc in versions:
     p = doc.add_paragraph()
