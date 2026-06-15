@@ -64,7 +64,9 @@ export default function useCalendar(initialCategory = 'F1') {
   }, [state.races, state.activeCategory])
 
   const nextRace = useMemo(() => {
-    return filteredRaces.find((r) => r.status === 'next') || null
+    return filteredRaces.find((r) => r.status === 'next')
+      || filteredRaces.find((r) => r.status === 'upcoming')
+      || null
   }, [filteredRaces])
 
   const pastRaces = useMemo(() => {
