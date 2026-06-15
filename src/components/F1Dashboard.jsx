@@ -5,6 +5,7 @@ import Hero from './Hero.jsx'
 import CalendarGrid from './CalendarGrid.jsx'
 
 const MAIN_CATEGORIES = ['F1', 'F2', 'F3']
+const EXTRA_CATEGORIES = ['IndyCar', 'NASCAR', 'WEC', 'MotoGP']
 
 function LoadingSkeleton() {
   return (
@@ -74,11 +75,11 @@ export default function F1Dashboard({ category }) {
                 onSelect={handleCategorySelect}
               />
             ) : (
-              <div className="text-center">
-                <span className="inline-block px-5 py-2 rounded-full bg-f1-carbon border border-f1-gray text-f1-red text-sm font-bold tracking-widest uppercase">
-                  {activeCategory}
-                </span>
-              </div>
+              <CategoryNav
+                categories={EXTRA_CATEGORIES}
+                activeCategory={activeCategory}
+                onSelect={handleCategorySelect}
+              />
             )}
 
             <Hero race={nextRace} />
