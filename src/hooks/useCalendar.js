@@ -28,11 +28,11 @@ function enrichRaces(raw) {
 
 const allRaces = enrichRaces(races)
 
-export default function useCalendar() {
+export default function useCalendar(initialCategory = 'F1') {
   const [state, setState] = useState({
     races: [],
     loading: true,
-    activeCategory: 'F1',
+    activeCategory: initialCategory,
   })
 
   useEffect(() => {

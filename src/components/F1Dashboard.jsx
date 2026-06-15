@@ -1,7 +1,10 @@
+import { Link, useNavigate } from 'react-router-dom'
 import useCalendar from '../hooks/useCalendar.js'
 import CategoryNav from './CategoryNav.jsx'
 import Hero from './Hero.jsx'
 import CalendarGrid from './CalendarGrid.jsx'
+
+const MAIN_CATEGORIES = ['F1', 'F2', 'F3']
 
 function LoadingSkeleton() {
   return (
@@ -17,30 +20,46 @@ function LoadingSkeleton() {
   )
 }
 
-export default function F1Dashboard() {
+export default function F1Dashboard({ category }) {
+  const navigate = useNavigate()
   const {
     races,
     loading,
     activeCategory,
     setActiveCategory,
     nextRace,
-  } = useCalendar()
+  } = useCalendar(category)
+
+  const handleCategorySelect = (cat) => {
+    setActiveCategory(cat)
+    navigate(`/calendar/${cat}`)
+  }
+
+  const isMainCategory = MAIN_CATEGORIES.includes(activeCategory)
 
   return (
     <div className="min-h-screen bg-f1-black">
       <header className="border-b border-f1-gray/50 bg-f1-black/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="w-8 h-8 rounded-lg bg-f1-red flex items-center justify-center text-white text-xs font-extrabold">
-              PL
-            </span>
-            <h1 className="text-white font-bold text-lg tracking-tight">
-              PitLane
-              <span className="text-f1-silver font-normal text-sm ml-2 hidden sm:inline">
-                Calendario de Carreras
+            <Link to="/" className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-lg bg-f1-red flex items-center justify-center text-white text-xs font-extrabold">
+                PL
               </span>
-            </h1>
+              <h1 className="text-white font-bold text-lg tracking-tight">
+                PitLane
+                <span className="text-f1-silver font-normal text-sm ml-2 hidden sm:inline">
+                  Calendario de Carreras
+                </span>
+              </h1>
+            </Link>
           </div>
+          <Link
+            to="/"
+            className="text-f1-silver hover:text-white transition-colors text-sm font-medium"
+          >
+            &larr; Categorías
+          </Link>
         </div>
       </header>
 
@@ -49,10 +68,18 @@ export default function F1Dashboard() {
           <LoadingSkeleton />
         ) : (
           <>
-            <CategoryNav
-              activeCategory={activeCategory}
-              onSelect={setActiveCategory}
-            />
+            {isMainCategory ? (
+              <CategoryNav
+                activeCategory={activeCategory}
+                onSelect={handleCategorySelect}
+              />
+            ) : (
+              <div className="text-center">
+                <span className="inline-block px-5 py-2 rounded-full bg-f1-carbon border border-f1-gray text-f1-red text-sm font-bold tracking-widest uppercase">
+                  {activeCategory}
+                </span>
+              </div>
+            )}
 
             <Hero race={nextRace} />
 
