@@ -2,7 +2,6 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react'
 
 const AUTH_KEY = 'pitlane_session'
-const ADMIN_KEY_HEX = /^[0-9a-fA-F]{32}$/
 
 const AuthContext = createContext(null)
 
@@ -56,13 +55,10 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener('storage', handle)
   }, [])
 
-  const login = useCallback((hexKey) => {
-    if (!ADMIN_KEY_HEX.test(hexKey)) {
-      return 'Acceso Denegado: Llave de seguridad inválida'
-    }
-    const session = encodeSession('Administrador')
+  const login = useCallback((profileName) => {
+    const session = encodeSession(profileName)
     localStorage.setItem(AUTH_KEY, session)
-    setUser({ profile: 'Administrador', authed: true })
+    setUser({ profile: profileName, authed: true })
     return null
   }, [])
 
