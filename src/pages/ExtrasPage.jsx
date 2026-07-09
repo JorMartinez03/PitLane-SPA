@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import CategoryCard from '../components/CategoryCard.jsx'
+import UserLoginPanel from '../components/UserLoginPanel.jsx'
 import races from '../data/races.js'
 
 function getRaceCount(category) {
@@ -33,12 +34,15 @@ export default function ExtrasPage() {
               </div>
             </Link>
           </div>
-          <Link
-            to="/"
-            className="text-f1-silver hover:text-white transition-colors text-sm font-medium"
-          >
-            &larr; Categorías
-          </Link>
+          <div className="flex items-center gap-3">
+            <UserLoginPanel />
+            <Link
+              to="/"
+              className="text-f1-silver hover:text-white transition-colors text-sm font-medium"
+            >
+              &larr; Categorías
+            </Link>
+          </div>
         </div>
       </header>
 

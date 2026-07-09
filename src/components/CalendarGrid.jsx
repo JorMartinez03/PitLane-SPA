@@ -1,6 +1,6 @@
 import RaceCard from './RaceCard.jsx'
 
-export default function CalendarGrid({ races, nextRace }) {
+export default function CalendarGrid({ races }) {
   if (!races.length) {
     return (
       <div className="text-center py-20">

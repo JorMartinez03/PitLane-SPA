@@ -14,7 +14,7 @@ function LoadingSkeleton() {
       <div className="h-40 bg-f1-carbon rounded-2xl" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="h-36 bg-f1-carbon rounded-xl" />
+          <div key={i} className="h-44 bg-f1-carbon rounded-xl" />
         ))}
       </div>
     </div>
@@ -55,12 +55,20 @@ export default function F1Dashboard({ category }) {
               </h1>
             </Link>
           </div>
-          <Link
-            to="/"
-            className="text-f1-silver hover:text-white transition-colors text-sm font-medium"
-          >
-            &larr; Categorías
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              to={`/clasificaciones/${activeCategory}`}
+              className="text-f1-silver hover:text-white transition-colors text-sm font-medium"
+            >
+              Clasificación
+            </Link>
+            <Link
+              to="/"
+              className="text-f1-silver hover:text-white transition-colors text-sm font-medium"
+            >
+              &larr; Categorías
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -102,7 +110,7 @@ export default function F1Dashboard({ category }) {
       <footer className="border-t border-f1-gray/50 mt-12">
         <div className="max-w-7xl mx-auto px-4 py-6 text-center text-f1-silver text-xs font-medium">
           <p>
-            PitLane &mdash; Fase Alpha &copy; {new Date().getFullYear()}
+            PitLane &mdash; Temporada 2026 &copy; {new Date().getFullYear()}
           </p>
         </div>
       </footer>

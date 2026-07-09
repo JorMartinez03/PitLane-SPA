@@ -1,3 +1,6 @@
+import CountdownTimer from './CountdownTimer.jsx'
+import { parseLocalDate, formatLocalDate } from '../utils/dateUtils.js'
+
 const STATUS_CONFIG = {
   past: {
     label: 'Finalizado',
@@ -18,8 +21,7 @@ const STATUS_CONFIG = {
 
 export default function RaceCard({ race }) {
   const cfg = STATUS_CONFIG[race.status]
-  const raceDate = new Date(race.date)
-  const formatted = raceDate.toLocaleDateString('es-MX', {
+  const formatted = formatLocalDate(race.date, 'es-MX', {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
@@ -59,13 +61,25 @@ export default function RaceCard({ race }) {
           </p>
         </div>
 
-        <div className="pt-2 border-t border-f1-gray/50">
+        <div className="pt-2 border-t border-f1-gray/50 space-y-2">
           <time
             dateTime={race.date}
-            className="text-xs font-semibold text-f1-silver"
+            className="text-xs font-semibold text-f1-silver block"
           >
             {formatted}
           </time>
+
+          {race.winner && (
+            <p className="text-[11px] text-f1-silver font-medium">
+              Ganador: <span className="text-white">{race.winner}</span>
+            </p>
+          )}
+
+          {race.status !== 'past' && (
+            <div className="pt-1">
+              <CountdownTimer targetDate={race.date} />
+            </div>
+          )}
         </div>
       </div>
     </article>

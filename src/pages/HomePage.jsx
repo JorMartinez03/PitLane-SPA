@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import CategoryCard from '../components/CategoryCard.jsx'
+import UserLoginPanel from '../components/UserLoginPanel.jsx'
 import races from '../data/races.js'
 
 function getRaceCount(category) {
@@ -16,18 +17,21 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-f1-black">
       <header className="border-b border-f1-gray/50 bg-f1-black/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-3">
-          <span className="w-9 h-9 rounded-lg bg-f1-red flex items-center justify-center text-white text-sm font-extrabold">
-            PL
-          </span>
-          <div>
-            <h1 className="text-white font-bold text-xl tracking-tight">
-              PitLane
-            </h1>
-            <p className="text-f1-silver text-xs font-medium -mt-0.5">
-              Calendario de Carreras
-            </p>
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="w-9 h-9 rounded-lg bg-f1-red flex items-center justify-center text-white text-sm font-extrabold">
+              PL
+            </span>
+            <div>
+              <h1 className="text-white font-bold text-xl tracking-tight">
+                PitLane
+              </h1>
+              <p className="text-f1-silver text-xs font-medium -mt-0.5">
+                Calendario de Carreras
+              </p>
+            </div>
           </div>
+          <UserLoginPanel />
         </div>
       </header>
 
@@ -38,7 +42,7 @@ export default function HomePage() {
             <span className="text-f1-red">categoría</span>
           </h2>
           <p className="text-f1-silver text-base max-w-md mx-auto">
-            Explora el calendario completo de la temporada 2026
+            Calendarios reales de la temporada 2026 con clasificaciones actualizadas
           </p>
         </section>
 
@@ -117,7 +121,7 @@ export default function HomePage() {
       <footer className="border-t border-f1-gray/50 mt-12">
         <div className="max-w-7xl mx-auto px-4 py-6 text-center text-f1-silver text-xs font-medium">
           <p>
-            PitLane &mdash; Fase Alpha &copy; {new Date().getFullYear()}
+            PitLane &mdash; Temporada 2026 &copy; {new Date().getFullYear()}
           </p>
         </div>
       </footer>
