@@ -1,11 +1,12 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { parseLocalDate } from '../utils/dateUtils.js'
 import races from '../data/races.js'
 
-const SIMULATED_DELAY = 600
+const SIMULATED_DELAY = 400
 
 function computeStatus(dateStr) {
   const now = new Date()
-  const raceDate = new Date(dateStr)
+  const raceDate = parseLocalDate(dateStr)
   const diff = raceDate - now
   if (diff < 0) return 'past'
   if (diff < 7 * 24 * 60 * 60 * 1000) return 'next'
@@ -16,12 +17,8 @@ function enrichRaces(raw) {
   return raw.map((r) => {
     const liveStatus = computeStatus(r.date)
     return {
-      id: r.id,
-      name: r.name,
-      circuit: r.circuit,
-      date: r.date,
-      category: r.category,
-      status: r.status === 'past' ? 'past' : liveStatus,
+      ...r,
+      status: liveStatus,
     }
   })
 }
