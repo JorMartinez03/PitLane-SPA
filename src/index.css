@@ -1,17 +1,11 @@
 /* 1. Importación única y obligatoria para Tailwind v4 */
 @import "tailwindcss";
 
-/* 2. Definición de tus colores de Fórmula 1 en la nueva sintaxis v4 */
+/* 2. Definición de tus colores de Fórmula 1 */
 @theme {
   --color-f1-black: #0f0f14;
   --color-f1-carbon: #15151e;
   --color-f1-red: #e10600;
   --color-f1-silver: #94a3b8;
   --color-f1-gray: #38383f;
-}
-
-/* 3. Tus estilos personalizados (si tienes alguno) van abajo, sin envolver en @layer */
-body {
-  margin: 0;
-  padding: 0;
 }

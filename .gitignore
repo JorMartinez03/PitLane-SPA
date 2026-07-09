@@ -24,7 +24,12 @@ dist-ssr
 *.sw?
 
 .vercel
+# Word documents
+*.docx
+*.doc
 # Word temp files
 ~$*
+# Python scripts
+*.py
 # Agentes de opencode
 .agents/
