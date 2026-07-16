@@ -21,7 +21,14 @@ export default function CountdownTimer({ targetDate }) {
     return () => clearInterval(id)
   }, [targetDate])
 
-  if (delta.expired) return null
+  if (delta.expired) {
+    return (
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-600/20 text-green-400 text-xs font-bold uppercase tracking-wider">
+        <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+        En Vivo
+      </span>
+    )
+  }
 
   return (
     <div className="flex items-center gap-3">

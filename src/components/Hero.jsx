@@ -1,5 +1,5 @@
 import CountdownTimer from './CountdownTimer.jsx'
-import { parseLocalDate, formatLocalDate } from '../utils/dateUtils.js'
+import { formatLocalDate, detectTimezone } from '../utils/dateUtils.js'
 
 export default function Hero({ race }) {
   if (!race) return null
@@ -10,6 +10,8 @@ export default function Hero({ race }) {
     month: 'long',
     year: 'numeric',
   })
+
+  const tz = detectTimezone()
 
   return (
     <section className="relative overflow-hidden rounded-2xl border-t-4 border-f1-red bg-gradient-to-br from-f1-carbon via-f1-carbon to-f1-black">
@@ -58,6 +60,9 @@ export default function Hero({ race }) {
                   Tiempo restante
                 </span>
                 <CountdownTimer targetDate={race.date} />
+                <span className="text-f1-silver/50 text-[10px] mt-1 block">
+                  Horario Local Detectado: {tz}
+                </span>
               </div>
             )}
           </div>

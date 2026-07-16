@@ -16,7 +16,7 @@ const EXTRA_CATEGORIES = [
 
 export default function ExtrasPage() {
   return (
-    <div className="min-h-screen bg-f1-black">
+    <div className="min-h-screen bg-f1-black pb-20">
       <header className="border-b border-f1-gray/50 bg-f1-black/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -80,13 +80,46 @@ export default function ExtrasPage() {
         </div>
       </main>
 
-      <footer className="border-t border-f1-gray/50 mt-12">
+      <footer className="border-t border-f1-gray/50 mt-12 pb-16">
         <div className="max-w-7xl mx-auto px-4 py-6 text-center text-f1-silver text-xs font-medium">
           <p>
             PitLane &mdash; Fase Alpha &copy; {new Date().getFullYear()}
           </p>
         </div>
       </footer>
+
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-f1-black/95 backdrop-blur-md border-t border-f1-gray/50">
+        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-around">
+          <Link
+            to="/"
+            className="flex flex-col items-center gap-1 text-f1-silver hover:text-f1-red transition-colors min-w-[60px]"
+          >
+            <span className="text-lg">📅</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider">Calendario</span>
+          </Link>
+          <Link
+            to="/clasificaciones/F1"
+            className="flex flex-col items-center gap-1 text-f1-silver hover:text-f1-red transition-colors min-w-[60px]"
+          >
+            <span className="text-lg">🏆</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider">Posiciones</span>
+          </Link>
+          <Link
+            to="/en-vivo"
+            className="flex flex-col items-center gap-1 text-f1-silver hover:text-f1-red transition-colors min-w-[60px]"
+          >
+            <span className="text-lg">🔴</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider">En Vivo</span>
+          </Link>
+          <Link
+            to="/extras"
+            className="flex flex-col items-center gap-1 text-f1-red min-w-[60px]"
+          >
+            <span className="text-lg">🏁</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider">Series</span>
+          </Link>
+        </div>
+      </nav>
     </div>
   )
 }

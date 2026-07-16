@@ -1,0 +1,17 @@
+{
+  "name": "PitLane — Calendario de Automovilismo",
+  "short_name": "PitLane",
+  "description": "Plataforma unificada de automovilismo. Calendarios de F1, F2 y F3 con clasificaciones en tiempo real.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f14",
+  "theme_color": "#0f0f14",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

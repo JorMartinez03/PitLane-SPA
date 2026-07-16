@@ -1,5 +1,5 @@
 import CountdownTimer from './CountdownTimer.jsx'
-import { parseLocalDate, formatLocalDate } from '../utils/dateUtils.js'
+import { formatLocalDate } from '../utils/dateUtils.js'
 
 const STATUS_CONFIG = {
   past: {

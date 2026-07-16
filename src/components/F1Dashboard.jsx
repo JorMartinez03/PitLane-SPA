@@ -3,6 +3,8 @@ import useCalendar from '../hooks/useCalendar.js'
 import CategoryNav from './CategoryNav.jsx'
 import Hero from './Hero.jsx'
 import CalendarGrid from './CalendarGrid.jsx'
+import MetaAdsBanner from './MetaAdsBanner.jsx'
+import { useLiveRaceContext } from '../context/LiveRaceContext.jsx'
 
 const MAIN_CATEGORIES = ['F1', 'F2', 'F3']
 const EXTRA_CATEGORIES = ['IndyCar', 'NASCAR', 'WEC', 'MotoGP']
@@ -21,6 +23,43 @@ function LoadingSkeleton() {
   )
 }
 
+function BottomNav({ activeCategory }) {
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-f1-black/95 backdrop-blur-md border-t border-f1-gray/50">
+      <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-around">
+        <Link
+          to={`/calendar/${activeCategory}`}
+          className="flex flex-col items-center gap-1 text-f1-silver hover:text-f1-red transition-colors min-w-[60px]"
+        >
+          <span className="text-lg">📅</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wider">Calendario</span>
+        </Link>
+        <Link
+          to={`/clasificaciones/${activeCategory}`}
+          className="flex flex-col items-center gap-1 text-f1-silver hover:text-f1-red transition-colors min-w-[60px]"
+        >
+          <span className="text-lg">🏆</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wider">Posiciones</span>
+        </Link>
+        <Link
+          to="/en-vivo"
+          className="flex flex-col items-center gap-1 text-f1-silver hover:text-f1-red transition-colors min-w-[60px]"
+        >
+          <span className="text-lg">🔴</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wider">En Vivo</span>
+        </Link>
+        <Link
+          to="/extras"
+          className="flex flex-col items-center gap-1 text-f1-silver hover:text-f1-red transition-colors min-w-[60px]"
+        >
+          <span className="text-lg">🏁</span>
+          <span className="text-[10px] font-semibold uppercase tracking-wider">Series</span>
+        </Link>
+      </div>
+    </nav>
+  )
+}
+
 export default function F1Dashboard({ category }) {
   const navigate = useNavigate()
   const {
@@ -31,6 +70,8 @@ export default function F1Dashboard({ category }) {
     nextRace,
   } = useCalendar(category)
 
+  const { isLive } = useLiveRaceContext()
+
   const handleCategorySelect = (cat) => {
     setActiveCategory(cat)
     navigate(`/calendar/${cat}`)
@@ -39,7 +80,7 @@ export default function F1Dashboard({ category }) {
   const isMainCategory = MAIN_CATEGORIES.includes(activeCategory)
 
   return (
-    <div className="min-h-screen bg-f1-black">
+    <div className="min-h-screen bg-f1-black pb-20">
       <header className="border-b border-f1-gray/50 bg-f1-black/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -56,6 +97,15 @@ export default function F1Dashboard({ category }) {
             </Link>
           </div>
           <div className="flex items-center gap-3">
+            {isLive && (
+              <Link
+                to="/en-vivo"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-600/20 border border-green-600/50 text-green-400 text-xs font-bold uppercase tracking-wider hover:bg-green-600/30 transition-colors"
+              >
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                En Vivo
+              </Link>
+            )}
             <Link
               to={`/clasificaciones/${activeCategory}`}
               className="text-f1-silver hover:text-white transition-colors text-sm font-medium"
@@ -103,17 +153,21 @@ export default function F1Dashboard({ category }) {
               </div>
               <CalendarGrid races={races} nextRace={nextRace} />
             </section>
+
+            <MetaAdsBanner />
           </>
         )}
       </main>
 
-      <footer className="border-t border-f1-gray/50 mt-12">
+      <footer className="border-t border-f1-gray/50 mt-12 pb-16">
         <div className="max-w-7xl mx-auto px-4 py-6 text-center text-f1-silver text-xs font-medium">
           <p>
             PitLane &mdash; Temporada 2026 &copy; {new Date().getFullYear()}
           </p>
         </div>
       </footer>
+
+      <BottomNav activeCategory={activeCategory} />
     </div>
   )
 }

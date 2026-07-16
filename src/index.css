@@ -1,11 +1,51 @@
-/* 1. Importación única y obligatoria para Tailwind v4 */
 @import "tailwindcss";
 
-/* 2. Definición de tus colores de Fórmula 1 */
 @theme {
   --color-f1-black: #0f0f14;
   --color-f1-carbon: #15151e;
   --color-f1-red: #e10600;
   --color-f1-silver: #94a3b8;
   --color-f1-gray: #38383f;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+input, select, textarea {
+  font-size: 16px;
+}
+
+@keyframes flash-yellow {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(234, 179, 8, 0.15); }
+}
+
+@keyframes flash-red {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(220, 38, 38, 0.15); }
+}
+
+.flash-yellow {
+  animation: flash-yellow 1s ease-in-out infinite;
+}
+
+.flash-red {
+  animation: flash-red 0.5s ease-in-out infinite;
+}
+
+.safe-touch {
+  min-width: 48px;
+  min-height: 48px;
 }

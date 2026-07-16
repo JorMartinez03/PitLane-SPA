@@ -12,19 +12,32 @@ export default function Paywall({ onBack }) {
 
         <div className="space-y-2">
           <h2 className="text-2xl font-extrabold text-white">
-            Contenido Premium
+            ¡Desbloquea el Modo Premium!
           </h2>
           <p className="text-f1-silver text-sm leading-relaxed">
-            Las tablas de clasificaciones detalladas están disponibles
-            exclusivamente para suscriptores Premium.
+            Accede de inmediato a:
           </p>
+          <ul className="text-f1-silver text-sm text-left space-y-1.5 max-w-xs mx-auto">
+            <li className="flex items-center gap-2">
+              <span className="text-f1-red">✓</span>
+              Clasificaciones en vivo y estadísticas
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-f1-red">✓</span>
+              Alertas instantáneas push del estado de pista
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-f1-red">✓</span>
+              Experiencia totalmente libre de publicidad
+            </li>
+          </ul>
         </div>
 
         <button
           onClick={() => setProfile('Premium')}
           className="w-full px-6 py-3 rounded-xl bg-f1-red text-white font-bold text-sm tracking-wider hover:bg-f1-red/90 transition-colors cursor-pointer"
         >
-          Actualizar a Premium — Gratis
+          Adquirir Suscripción — Gratis
         </button>
 
         <button

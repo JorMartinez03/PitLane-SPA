@@ -35,8 +35,6 @@ export default function useCalendar(initialCategory = 'F1') {
   useEffect(() => {
     let cancelled = false
 
-    setState((prev) => ({ ...prev, loading: true }))
-
     const timer = setTimeout(() => {
       if (cancelled) return
       setState((prev) => ({

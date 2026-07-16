@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import CategoryCard from '../components/CategoryCard.jsx'
 import UserLoginPanel from '../components/UserLoginPanel.jsx'
+import MetaAdsBanner from '../components/MetaAdsBanner.jsx'
+import CountdownTimer from '../components/CountdownTimer.jsx'
 import races from '../data/races.js'
 
 function getRaceCount(category) {
@@ -13,9 +15,19 @@ const MAIN_CATEGORIES = [
   { category: 'F3', label: 'Fórmula 3' },
 ]
 
+function getNextRace() {
+  const now = new Date()
+  const upcoming = races
+    .filter((r) => new Date(r.date) > now && (r.category === 'F1' || r.category === 'F2' || r.category === 'F3'))
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+  return upcoming[0] || null
+}
+
 export default function HomePage() {
+  const nextRace = getNextRace()
+
   return (
-    <div className="min-h-screen bg-f1-black">
+    <div className="min-h-screen bg-f1-black pb-20">
       <header className="border-b border-f1-gray/50 bg-f1-black/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -36,6 +48,26 @@ export default function HomePage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-12 space-y-16">
+        {nextRace && (
+          <section className="relative overflow-hidden rounded-2xl border-t-4 border-f1-red bg-gradient-to-br from-f1-carbon via-f1-carbon to-f1-black p-8">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-f1-red/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="relative space-y-3">
+              <p className="text-f1-red text-xs font-semibold tracking-[0.2em] uppercase">
+                Próxima Carrera
+              </p>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-white leading-tight">
+                {nextRace.name}
+              </h2>
+              <p className="text-f1-silver text-sm font-medium">
+                {nextRace.circuit} — {nextRace.category}
+              </p>
+              <div className="pt-2">
+                <CountdownTimer targetDate={nextRace.date} />
+              </div>
+            </div>
+          </section>
+        )}
+
         <section className="text-center space-y-4">
           <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight">
             Elige tu{' '}
@@ -116,15 +148,50 @@ export default function HomePage() {
             </Link>
           </div>
         </section>
+
+        <MetaAdsBanner />
       </main>
 
-      <footer className="border-t border-f1-gray/50 mt-12">
+      <footer className="border-t border-f1-gray/50 mt-12 pb-16">
         <div className="max-w-7xl mx-auto px-4 py-6 text-center text-f1-silver text-xs font-medium">
           <p>
             PitLane &mdash; Temporada 2026 &copy; {new Date().getFullYear()}
           </p>
         </div>
       </footer>
+
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-f1-black/95 backdrop-blur-md border-t border-f1-gray/50">
+        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-around">
+          <Link
+            to="/"
+            className="flex flex-col items-center gap-1 text-f1-red min-w-[60px]"
+          >
+            <span className="text-lg">📅</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider">Calendario</span>
+          </Link>
+          <Link
+            to="/clasificaciones/F1"
+            className="flex flex-col items-center gap-1 text-f1-silver hover:text-f1-red transition-colors min-w-[60px]"
+          >
+            <span className="text-lg">🏆</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider">Posiciones</span>
+          </Link>
+          <Link
+            to="/en-vivo"
+            className="flex flex-col items-center gap-1 text-f1-silver hover:text-f1-red transition-colors min-w-[60px]"
+          >
+            <span className="text-lg">🔴</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider">En Vivo</span>
+          </Link>
+          <Link
+            to="/extras"
+            className="flex flex-col items-center gap-1 text-f1-silver hover:text-f1-red transition-colors min-w-[60px]"
+          >
+            <span className="text-lg">🏁</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider">Series</span>
+          </Link>
+        </div>
+      </nav>
     </div>
   )
 }

@@ -7,7 +7,7 @@ const PROFILES = [
 ]
 
 export default function UserLoginPanel() {
-  const { profile: currentProfile, setProfile } = useAuth()
+  const { profile: currentProfile, setProfile, admin } = useAuth()
   const [open, setOpen] = useState(false)
 
   const handleSelect = (key) => {
@@ -71,6 +71,19 @@ export default function UserLoginPanel() {
                 )
               })}
             </div>
+
+            {admin.authed && (
+              <div className="px-2 pb-2">
+                <a
+                  href="/admin"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-f1-red/10 border border-f1-red/30 text-f1-red text-xs font-bold uppercase tracking-wider hover:bg-f1-red/20 transition-colors"
+                >
+                  <span>⚙️</span>
+                  Panel Admin
+                </a>
+              </div>
+            )}
           </div>
         </>
       )}
