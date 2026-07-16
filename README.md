@@ -1,22 +1,22 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/PitLane-F1--Alpha-e10600?style=for-the-badge&labelColor=0f0f14">
-    <img alt="PitLane" src="https://img.shields.io/badge/PitLane-F1--Alpha-e10600?style=for-the-badge&labelColor=0f0f14">
+    <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/PitLane-v1.6-e10600?style=for-the-badge&labelColor=0f0f14">
+    <img alt="PitLane" src="https://img.shields.io/badge/PitLane-v1.6-e10600?style=for-the-badge&labelColor=0f0f14">
   </picture>
 </p>
 
 <p align="center">
-  <strong>Single Page Application &mdash; Calendario y clasificaciones de F1, F2, F3, IndyCar, NASCAR, WEC y MotoGP (Temporada 2026)</strong>
+  <strong>Single Page Application &mdash; Plataforma unificada de automovilismo (F1, F2, F3, IndyCar, NASCAR, WEC, MotoGP)</strong>
   <br />
   <sub>Construida con React 19, Vite 8, Tailwind CSS v4 y React Router</sub>
 </p>
 
 <p align="center">
   <a href="#overview">Overview</a> &bull;
-  <a href="#arquitectura">Arquitectura</a> &bull;
-  <a href="#componentes-y-animaciones">Componentes</a> &bull;
+  <a href="#funcionalidades-segun-srs">Funcionalidades SRS</a> &bull;
   <a href="#primeros-pasos">Primeros Pasos</a> &bull;
   <a href="#estructura-del-proyecto">Estructura</a> &bull;
+  <a href="#rutas-y-navegacion">Rutas</a> &bull;
   <a href="#escalabilidad">Escalabilidad</a>
 </p>
 
@@ -28,24 +28,35 @@
 
 ## Overview
 
-PitLane es una Single Page Application en fase alpha que muestra el calendario completo y clasificaciones de la temporada 2026 de **7 categorías**: Formula 1, Formula 2, Formula 3, IndyCar, NASCAR, WEC y MotoGP. La interfaz esta inspirada visualmente en el sitio oficial de Formula 1, con una estetica oscura de fibra de carbono y el caracteristico acento rojo F1.
+PitLane es una **Single Page Application / Progressive Web App** que actua como concentrador interactivo de informacion del deporte motor. Muestra calendarios, clasificaciones y carrera en vivo de **7 categorias** de la temporada 2026: Formula 1, Formula 2, Formula 3, IndyCar, NASCAR, WEC y MotoGP.
 
-La aplicacion sigue una **arquitectura desacoplada** que separa la logica de datos de la presentacion visual, facilitando la sustitucion de datos locales por llamadas a una API real cuando se migre a produccion.
+La interfaz esta inspirada en la estetica de Formula 1 con un tema oscuro de fibra de carbono y el caracteristico acento rojo. La aplicacion sigue una **arquitectura desacoplada** en 3 capas (Datos, Logica, Presentacion) y esta disenada para funcionar offline mediante Service Worker y cache local.
+
+### Stack Tecnologico
+
+| Capa | Tecnologia | Version |
+|------|-----------|---------|
+| Framework | React | 19.x |
+| Build Tool | Vite | 8.x |
+| CSS | Tailwind CSS | 4.x |
+| Routing | React Router DOM | 7.x |
+| Deploy | Vercel | - |
 
 ### Funcionalidades Principales
 
-- **Pagina principal con categorias** &mdash; cards interactivas para acceder al calendario de cada serie
-- **Filtrado por categoria** &mdash; cambia entre los calendarios sin recargar la pagina
-- **Categorias adicionales** &mdash; calendarios completos de IndyCar, NASCAR, WEC y MotoGP
-- **Datos reales 2026** &mdash; fechas oficiales, circuitos, ganadores y clasificaciones actualizadas en tiempo real de cada serie
-- **Deteccion dinamica de la proxima carrera** &mdash; identifica y destaca automaticamente la siguiente carrera basado en la fecha actual del sistema con estado `past`, `next` (< 7 dias) y `upcoming` (>= 7 dias)
-- **Countdown en vivo** &mdash; contador regresivo con segundos en tiempo real para las carreras proximas
-- **Clasificaciones** &mdash; pagina dedicada con tabla de puntuaciones por categoria, protegida con paywall
-- **Autenticacion** &mdash; registro, inicio de sesion y muro de pago simulado con React Context
-- **Fechas localizadas** &mdash; parseadas como fecha local del usuario para evitar desfases por huso horario
-- **Diseno responsivo** &mdash; se adapta de 1 columna en movil a 4 columnas en pantallas anchas
-- **Animaciones interactivas** &mdash; elevacion al hover, transiciones de color y barras de acento deslizantes
-- **Skeleton de carga** &mdash; interfaz de placeholder animada mientras se cargan los datos de forma asincrona
+- **Calendarios publicos** de 7 categorias con fechas reales 2026
+- **Ajuste automatico de huso horario** del dispositivo del usuario
+- **Cuenta regresiva activa** con badge "En Vivo" al expirar
+- **Muro de pago (Paywall)** con Route Guard y redireccion segura
+- **Clasificaciones Premium** con buscador, ordenamiento y 7 categorias
+- **Carrera en vivo** con posiciones actualizadas cada 3s y banderas de pista
+- **Notificaciones Web Push** configurables por tipo de evento
+- **Panel administrativo** con autenticacion por llave hex 32ch y bitacora de auditoria
+- **Publicidad asincrona** (Meta Ads) sin bloquear la interfaz
+- **Modo sin conexion** con Service Worker y cache local
+- **Barra de navegacion inferior** persistente en todas las paginas
+- **Encriptacion AES-128** de sesiones en localStorage
+- **Lazy loading** por ruta para optimizar el bundle size
 
 <br />
 
@@ -53,156 +64,40 @@ La aplicacion sigue una **arquitectura desacoplada** que separa la logica de dat
 
 <br />
 
-## Arquitectura
+## Funcionalidades segun SRS
 
-La aplicacion esta organizada en tres capas distintas, cada una con una responsabilidad unica:
+### RF-001: Calendarios Publicos
+El usuario gratuito puede consultar los calendarios de F1, F2, F3 e Indycar, NASCAR, WEC y MotoGP sin autenticacion.
 
-### Capa de Datos (src/data/)
+### RF-002: Ajuste Automatico de Huso Horario
+Los horarios se convierten automaticamente a la zona horaria local del usuario. Se detecta via `Intl.DateTimeFormat` y se muestra en el Hero y countdown.
 
-Contiene arrays estaticos con el calendario y clasificaciones de la temporada 2026:
+### RF-003: Cuenta Regresiva Activa
+Timer que decrementa dias/horas/min/seg en tiempo real. Al llegar a cero muestra badge "En Vivo" animado.
 
-- **`races.js`** &mdash; 115 carreras reales de 7 categorias (F1, F2, F3, IndyCar, NASCAR, WEC, MotoGP). Cada carrera sigue un esquema normalizado con los campos `id`, `name`, `circuit`, `date` (formato ISO `YYYY-MM-DD`), `category`, `winner` y `team` (cuando aplica).
-- **`standings.js`** &mdash; clasificaciones actualizadas de pilotos/corredores con posiciones, puntos, victorias y equipo.
+### RF-004: Muro de Pago (Paywall)
+El Route Guard intercepta el acceso a `/clasificaciones/*` para usuarios gratuitos. Renderiza overlay informativo con boton "Volver al Calendario".
 
-### Capa de Logica (src/hooks/useCalendar.js)
+### RF-005: Clasificaciones Premium
+Tablas con buscador, sorting por columnas y datos de 7 categorias. Incluye posiciones, pilotos, equipos y puntos.
 
-Custom hook de React que centraliza toda la gestion de estado y logica de negocio:
+### RF-006: Carrera en Vivo (Minuto a Minuto)
+Simulacion de carrera en tiempo real con actualizaciones cada 3s, banderas de pista (Verde, Amarilla, Safety Car, Roja, VSC) y 22 pilotos de F1 + 22 F2 + 21 F3 + 10 IndyCar/NASCAR/WEC/MotoGP.
 
-```
-Responsabilidades
-  - Simula la carga asincrona de datos con un retardo de 400ms
-  - Agrega estado en vivo a cada carrera (past / next / upcoming) mediante computeStatus()
-  - Filtra las carreras de forma reactiva segun la categoria seleccionada
-  - Identifica automaticamente la proxima carrera (nextRace)
-  - Provee listas separadas de carreras pasadas (pastRaces) y futuras (upcomingRaces)
-  - Limpia los timers al desmontar el componente
-```
+### RF-007: Notificaciones Web Push
+Panel de configuracion con toggles para Inicios de sesion, Banderas Rojas y Coche de Seguridad. Usa la API nativa de `Notification`.
 
-### Capa de Presentacion (src/components/)
+### RF-008: Autenticacion Administrativa
+Login con llave unica de 32 caracteres hexadecimales. Token encriptado con AES-128 en localStorage. Acceso a `/admin/login`.
 
-Componentes visuales sin estado que reciben los datos a traves de props. Ningun componente importa o accede directamente a la capa de datos, garantizando un aislamiento visual completo.
+### RF-009: Edicion de Datos y Bitacora
+Panel admin con tabs: General, Editar Datos, Carrera en Vivo, Bitacora. Toda modificacion queda registrada con timestamp, llave y valores anterior/nuevo.
 
-### Capa de Utilidades (src/utils/dateUtils.js)
+### RF-010: Publicidad Asincrona
+Banner de Meta Ads que se carga 2s despues del renderizado inicial, sin bloquear el hilo principal.
 
-Funciones helper para manejo de fechas en zona horaria local:
-- `parseLocalDate(dateStr)` &mdash; convierte `YYYY-MM-DD` a Date local evitando desfase UTC
-- `formatLocalDate(dateStr, locale, options)` &mdash; formato localizado con `toLocaleDateString`
-- `detectTimezone()` &mdash; detecta el huso horario del navegador
-
-### Enrutamiento (React Router)
-
-| Ruta                          | Componente           | Descripcion                               |
-|-------------------------------|----------------------|-------------------------------------------|
-| `/`                           | `HomePage`           | Pagina principal con cards de categorias  |
-| `/calendar/:category`         | `CalendarPage`       | Calendario para una categoria especifica  |
-| `/extras`                     | `ExtrasPage`         | Categorias adicionales                     |
-| `/clasificaciones/:category`  | `ClasificacionesPage`| Tabla de clasificaciones con paywall      |
-| `/login`                      | `LoginPage`          | Inicio de sesion                          |
-| `/register`                   | `RegisterPage`       | Registro de usuario                       |
-
-<br />
-
----
-
-<br />
-
-## Componentes y Animaciones
-
-### CategoryCard
-
-Componente reutilizable de card con gradiente de color, nombre de la categoria y numero de carreras. Incluye gradiente de fondo unico por categoria (rojo para F1, azul para F2, verde para F3, indigo para IndyCar, etc.), efecto de elevacion al hover (`hover:-translate-y-1`), circulos decorativos con blur para dar profundidad y enlace de navegacion al calendario correspondiente.
-
-### HomePage
-
-Pagina principal que lista todas las categorias disponibles en dos secciones:
-- **Categorias Principales**: F1, F2, F3 como cards individuales
-- **Otras Series**: Card "Mas Categorias" que enlaza a IndyCar, NASCAR, WEC y MotoGP
-- Header con logo PitLane, panel de inicio de sesion y navegacion
-
-### CalendarPage
-
-Pagina que extrae la categoria de la URL (`/calendar/:category`) y renderiza el calendario completo usando `F1Dashboard`. Soporta todas las categorias del sistema.
-
-### ExtrasPage
-
-Pagina que lista las categorias adicionales (IndyCar, NASCAR, WEC, MotoGP) como cards individuales, cada una enlazando a su propio calendario.
-
-### F1Dashboard
-
-Componente orquestador que consume `useCalendar` y distribuye los datos a los componentes hijos. Proporciona la estructura principal del calendario: un header fijo con efecto de vidrio (`backdrop-blur-md`), navegacion entre categorias con `CategoryNav`, enlaces directos a clasificaciones, un skeleton de carga animado con efecto pulse, el area de contenido principal y un pie de pagina.
-
-### CategoryNav
-
-Barra de filtros horizontal con botones para las categorias. El boton activo se muestra con fondo rojo solido y una sombra coincidente (`shadow-lg shadow-f1-red/30`). Los botones inactivos aparecen en color plateado y se iluminan al hacer hover. Todas las transiciones duran 200ms para una respuesta tactil. Al cambiar de categoria, navega a la ruta correspondiente mediante React Router.
-
-### Hero
-
-Banner destacado que solo se muestra cuando se detecta una proxima carrera. Incluye:
-- Borde superior rojo solido de 4px (estilo caracteristico de F1)
-- Fondo con degradado diagonal de carbon a negro
-- Dos circulos decorativos con efecto de desenfoque (`blur-3xl`)
-- Nombre del ganador si la carrera ya finalizo
-- Fecha formateada en zona horaria local
-- Badge de categoria con indicador animado pulse
-- CountdownTimer integrado para carreras en estado `next` o `upcoming`
-
-### RaceCard
-
-Tarjeta individual de carrera con informacion detallada y animaciones:
-
-```
-Efecto                          Implementacion
-elevacion                       hover:-translate-y-1
-transicion de borde             hover:border-f1-red
-barra de acento superior        barra absoluta: scale-x-0 a scale-x-100
-cambio de color del titulo      group-hover:text-f1-red
-duracion maestra                duration-300 ease-out
-```
-
-Indicador circular de color que comunica el estado de la carrera de un vistazo:
-- **Punto rojo** &mdash; siguiente carrera (next)
-- **Punto plateado** &mdash; proximamente (upcoming)
-- **Punto gris** &mdash; finalizado (past)
-
-Cada tarjeta muestra ademas: nombre del ganador (si la carrera finalizo), circuito, fecha localizada y countdown en vivo (si la carrera no ha pasado).
-
-### CountdownTimer
-
-Contador regresivo en vivo que se actualiza cada segundo. Muestra dias, horas, minutos y segundos restantes hasta la fecha objetivo. Se oculta automaticamente cuando la fecha ya expiro. Disenado con numeros tabulares (`tabular-nums`) para evitar saltos visuales durante la actualizacion.
-
-### CalendarGrid
-
-Distribuye las tarjetas en un CSS Grid responsivo:
-
-```
-Breakpoint      Columnas
-Por defecto     1
-sm (640px)      2
-lg (1024px)     3
-xl (1280px)     4
-```
-
-Se muestra un mensaje centrado cuando no hay carreras que coincidan con el filtro actual.
-
-### ClasificacionesTable
-
-Tabla de clasificaciones con columnas de posicion, nombre, puntos, victorias y equipo. Los datos se cargan desde `src/data/standings.js` segun la categoria activa. Incluye estilos alternados por fila y badge para el lider del campeonato.
-
-### Paywall
-
-Componente de muro de pago simulado que restringe el acceso a las clasificaciones para usuarios no autenticados. Muestra el nombre de la categoria bloqueada y botones para iniciar sesion o registrarse.
-
-### ProtectedRoute
-
-Componente de guarda de ruta que verifica el estado de autenticacion. Redirige a la pagina de inicio de sesion si el usuario no esta autenticado.
-
-### AuthContext
-
-Contexto de React para gestionar el estado de autenticacion del usuario. Provee `login()`, `register()`, `logout()` y el estado `user` a toda la aplicacion.
-
-### UserLoginPanel
-
-Panel de usuario en el header que muestra el nombre del usuario autenticado con un boton de cerrar sesion, o un boton de iniciar sesion para usuarios no autenticados.
+### RNF-008: Resiliencia Offline
+Service Worker con cache first strategy. Banner "Modo sin Conexion" al perder señal. Datos de calendario accesibles sin internet.
 
 <br />
 
@@ -220,8 +115,8 @@ Panel de usuario en el header que muestra el nombre del usuario autenticado con 
 ### Instalacion
 
 ```bash
-git clone <repository-url>
-cd spa-alpha
+git clone https://github.com/JorMartinez03/PitLane-SPA.git
+cd PitLane-SPA
 npm install
 ```
 
@@ -231,16 +126,14 @@ npm install
 npm run dev
 ```
 
-Abre el servidor de desarrollo en [http://localhost:5173](http://localhost:5173) con recarga en caliente habilitada.
+Abre el servidor en [http://localhost:5173](http://localhost:5173).
 
-### Compilacion para Produccion
+### Compilacion
 
 ```bash
 npm run build
 npm run preview
 ```
-
-Genera un bundle de produccion optimizado en el directorio `dist/`.
 
 ### Linting
 
@@ -248,29 +141,28 @@ Genera un bundle de produccion optimizado en el directorio `dist/`.
 npm run lint
 ```
 
-Ejecuta ESLint sobre el codigo fuente usando las reglas configuradas en el proyecto.
+<br />
 
-### Paginas y Navegacion
+---
+
+<br />
+
+## Rutas y Navegacion
+
+| Ruta | Componente | Descripcion |
+|------|-----------|-------------|
+| `/` | `HomePage` | Pagina principal con cards de categorias y proxima carrera |
+| `/calendar/:category` | `CalendarPage` | Calendario completo de la categoria |
+| `/extras` | `ExtrasPage` | Categorias adicionales (IndyCar, NASCAR, WEC, MotoGP) |
+| `/clasificaciones/:category` | `ClasificacionesPage` | Clasificaciones con selector de 7 categorias (Premium) |
+| `/en-vivo` | `LiveRacePage` | Carrera en vivo con 7 categorias y notificaciones (Premium) |
+| `/admin/login` | `AdminLoginPage` | Login administrativo con llave hex |
+| `/admin` | `AdminPanelPage` | Panel admin: edicion, control en vivo, bitacora |
+
+### Llave de Administrador
 
 ```
-/                        Pagina principal con categorias
-/calendar/F1             Calendario de Formula 1
-/calendar/F2             Calendario de Formula 2
-/calendar/F3             Calendario de Formula 3
-/calendar/IndyCar        Calendario de IndyCar
-/calendar/NASCAR         Calendario de NASCAR
-/calendar/WEC            Calendario de WEC
-/calendar/MotoGP         Calendario de MotoGP
-/extras                  Categorias adicionales
-/clasificaciones/F1      Clasificaciones de F1 (requiere autenticacion)
-/clasificaciones/F2      Clasificaciones de F2
-/clasificaciones/F3      Clasificaciones de F3
-/clasificaciones/IndyCar Clasificaciones de IndyCar
-/clasificaciones/NASCAR  Clasificaciones de NASCAR
-/clasificaciones/WEC     Clasificaciones de WEC
-/clasificaciones/MotoGP  Clasificaciones de MotoGP
-/login                   Inicio de sesion
-/register                Registro de usuario
+a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6
 ```
 
 <br />
@@ -282,42 +174,57 @@ Ejecuta ESLint sobre el codigo fuente usando las reglas configuradas en el proye
 ## Estructura del Proyecto
 
 ```
-spa-alpha/
-  index.html                 Punto de entrada HTML con Google Fonts (Inter)
-  package.json               Dependencias y scripts de npm
-  vite.config.js             Configuracion de Vite con plugin de Tailwind
+PitLane-SPA/
+  index.html                  Entry HTML con PWA meta tags
+  package.json                Dependencias y scripts
+  vite.config.js              Config Vite + React + Tailwind
+  public/
+    manifest.json             PWA manifest
+    sw.js                     Service Worker (cache offline)
+    favicon.svg               Icono de la app
   src/
-    main.jsx                 Punto de entrada del renderizado de React
-    index.css                Estilos globales con tokens de tema de Tailwind
-    App.jsx                  Componente raiz con React Router
-    utils/
-      dateUtils.js           Funciones para manejo de fechas en zona local
-    data/
-      races.js               115 carreras (temporada 2026 de 7 categorias)
-      standings.js           Clasificaciones oficiales 2026 por categoria
-    hooks/
-      useCalendar.js         Custom hook: estado, filtrado, simulacion asincrona
+    main.jsx                  Entry point con AuthProvider
+    index.css                 Tailwind v4 + theme tokens F1
+    App.jsx                   Router con lazy loading + LiveRaceProvider
     context/
-      AuthContext.jsx        Contexto de autenticacion (login, register, logout)
+      AuthContext.jsx          Auth con AES-128 + admin key validation
+      LiveRaceContext.jsx      Estado global de carrera en vivo
+    data/
+      races.js                115 carreras reales 2026 (7 categorias)
+      standings.js            Clasificaciones actualizadas por categoria
+      liveRaceData.js         Pilotos reales 2026 para simulacion en vivo
+    hooks/
+      useCalendar.js          Logica de calendario y filtrado
+      useLiveRace.js          Simulacion de carrera en vivo
+      useNotifications.js     Notificaciones Web Push nativas
+    utils/
+      dateUtils.js            Manejo de fechas en zona local
+      crypto.js               Encriptacion AES-128 + validacion admin key
     components/
-      CategoryCard.jsx       Card de categoria con gradiente y enlace
-      F1Dashboard.jsx        Orquestador de layout con skeleton de carga
-      CategoryNav.jsx        Navegacion de filtros por categoria
-      Hero.jsx               Banner de la proxima carrera con countdown
-      CalendarGrid.jsx       Contenedor de cuadricula responsivo
-      RaceCard.jsx           Tarjeta individual de carrera con animaciones hover
-      CountdownTimer.jsx     Contador regresivo en vivo
-      ClasificacionesTable.jsx Tabla de clasificaciones con datos reales
-      Paywall.jsx            Muro de pago simulado para contenido premium
-      ProtectedRoute.jsx     Guarda de ruta para contenido autenticado
-      UserLoginPanel.jsx     Panel de usuario en el header
+      CategoryCard.jsx        Card reutilizable de categoria
+      CategoryNav.jsx         Navegacion de filtros por categoria
+      Hero.jsx                Banner proxima carrera + countdown + timezone
+      RaceCard.jsx            Tarjeta de carrera con animaciones
+      CalendarGrid.jsx        Cuadricula responsiva de carreras
+      CountdownTimer.jsx      Timer regresivo con badge "En Vivo"
+      ClasificacionesTable.jsx Tabla con buscador y sorting
+      Paywall.jsx             Muro de pago Premium
+      ProtectedRoute.jsx      Guarda de ruta (Route Guard)
+      UserLoginPanel.jsx      Selector de perfil + acceso admin
+      LiveRaceBanner.jsx      Banner de estado de pista en vivo
+      LivePositionsTable.jsx  Tabla de posiciones en tiempo real
+      NotificationSettings.jsx Config de alertas Web Push
+      MetaAdsBanner.jsx       Banner publicitario asincrono
+      OfflineIndicator.jsx    Indicador de modo sin conexion
+      AuditLog.jsx            Bitacora de auditoria admin
     pages/
-      HomePage.jsx           Pagina principal con cards de categorias
-      CalendarPage.jsx       Pagina de calendario por categoria
-      ExtrasPage.jsx         Pagina de categorias adicionales
-      ClasificacionesPage.jsx Pagina de clasificaciones con paywall
-      LoginPage.jsx          Pagina de inicio de sesion
-      RegisterPage.jsx       Pagina de registro de usuario
+      HomePage.jsx            Landing con categorias + countdown + bottom nav
+      CalendarPage.jsx        Vista de calendario por categoria
+      ExtrasPage.jsx          Categorias adicionales
+      ClasificacionesPage.jsx Clasificaciones con 7 pestañas
+      LiveRacePage.jsx        Carrera en vivo con 7 categorias
+      AdminLoginPage.jsx      Login administrativo
+      AdminPanelPage.jsx      Panel admin completo
 ```
 
 <br />
@@ -328,31 +235,25 @@ spa-alpha/
 
 ## Escalabilidad
 
-La arquitectura esta disenada para evolucionar de alpha a produccion con una friccion minima.
+### Migrar a API Real
 
-### Migrar Datos Locales a una API
+1. Reemplazar importacion estatica en `useCalendar.js` por `fetch()`
+2. Mantener el mismo esquema `{ id, name, circuit, date, category, winner, team }`
+3. Ningun componente visual requiere modificacion
 
-Solo es necesario modificar `src/hooks/useCalendar.js`:
+### Agregar Categoria
 
-1. Reemplazar la importacion estatica de `races.js` por una llamada `fetch()` o axios
-2. Sustituir el `setTimeout` de simulacion por una cadena de promesas de la peticion HTTP
-3. Mapear la respuesta de la API al mismo formato estandarizado `{ id, name, circuit, date, category, winner, team }`
-4. Ningun componente visual requiere modificacion
-
-### Anadir una Nueva Categoria
-
-1. Agregar objetos de carrera a `src/data/races.js` con el nuevo valor de categoria
-2. Agregar clasificaciones en `src/data/standings.js`
-3. Agregar la categoria al array correspondiente en `HomePage.jsx` o `ExtrasPage.jsx`
-4. Opcional: agregar un gradiente de color en `CategoryCard.jsx` (`GRADIENTS`)
-5. Para que aparezca en el nav de F1Dashboard, anadirla al array `MAIN_CATEGORIES`
+1. Agregar carreras a `src/data/races.js`
+2. Agregar clasificaciones a `src/data/standings.js`
+3. Agregar pilotos a `src/data/liveRaceData.js`
+4. Agregar al array `ALL_CATEGORIES` en `ClasificacionesPage.jsx` y `LiveRacePage.jsx`
 
 ### Mejoras Previstas
 
-- Estado persistente con Zustand o React Context para datos entre sesiones
-- Paginas individuales de detalle de carrera con informacion ampliada
-- Soporte para multiples temporadas mediante una dimension de filtro adicional
-- Pruebas unitarias y de integracion con Vitest y React Testing Library
+- Migracion a API real de datos deportivos
+- Integracion pasarela de pagos real
+- Pruebas unitarias con Vitest
+- Zustand para estado persistente
 
 <br />
 
@@ -367,6 +268,7 @@ Solo es necesario modificar `src/hooks/useCalendar.js`:
   <img src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite 8" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white" alt="Tailwind CSS v4" />
   <img src="https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white" alt="ESLint" />
+  <img src="https://img.shields.io/badge/PWA-5A0FC8?style=flat-square&logo=pwa&logoColor=white" alt="PWA" />
 </div>
 
 <br />
@@ -376,7 +278,7 @@ Solo es necesario modificar `src/hooks/useCalendar.js`:
 <br />
 
 <p align="center">
-  <sub>Fase Alpha &mdash; Temporada 2026</sub>
+  <sub>v1.6 &mdash; Junio 2026</sub>
   <br />
   <sub>Este proyecto no esta afiliado a Formula 1 ni a la FIA.</sub>
 </p>
