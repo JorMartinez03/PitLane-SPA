@@ -3,7 +3,7 @@ const races = [
   {
     id: 'f1-01', name: 'Gran Premio de Australia', circuit: 'Albert Park Circuit',
     date: '2026-03-08', category: 'F1', status: 'past',
-    winner: 'George Russell', team: 'Mercedes',
+    winner: 'Lando Norris', team: 'McLaren',
   },
   {
     id: 'f1-02', name: 'Gran Premio de China', circuit: 'Shanghai International Circuit',
@@ -13,37 +13,37 @@ const races = [
   {
     id: 'f1-03', name: 'Gran Premio de Japón', circuit: 'Suzuka International Racing Course',
     date: '2026-03-29', category: 'F1', status: 'past',
-    winner: 'Andrea Kimi Antonelli', team: 'Mercedes',
+    winner: 'Max Verstappen', team: 'Red Bull Racing',
   },
   {
     id: 'f1-04', name: 'Gran Premio de Miami', circuit: 'Miami International Autodrome',
     date: '2026-05-03', category: 'F1', status: 'past',
-    winner: 'Andrea Kimi Antonelli', team: 'Mercedes',
+    winner: 'Lando Norris', team: 'McLaren',
   },
   {
     id: 'f1-05', name: 'Gran Premio de Canadá', circuit: 'Circuit Gilles Villeneuve',
     date: '2026-05-24', category: 'F1', status: 'past',
-    winner: 'Andrea Kimi Antonelli', team: 'Mercedes',
+    winner: 'Charles Leclerc', team: 'Ferrari',
   },
   {
     id: 'f1-06', name: 'Gran Premio de Mónaco', circuit: 'Circuit de Monaco',
     date: '2026-06-07', category: 'F1', status: 'past',
-    winner: 'Andrea Kimi Antonelli', team: 'Mercedes',
+    winner: 'Lewis Hamilton', team: 'Ferrari',
   },
   {
     id: 'f1-07', name: 'Gran Premio de España', circuit: 'Circuit de Barcelona-Catalunya',
     date: '2026-06-14', category: 'F1', status: 'past',
-    winner: 'Lewis Hamilton', team: 'Ferrari',
+    winner: 'Andrea Kimi Antonelli', team: 'Mercedes',
   },
   {
     id: 'f1-08', name: 'Gran Premio de Austria', circuit: 'Red Bull Ring',
     date: '2026-06-28', category: 'F1', status: 'past',
-    winner: 'George Russell', team: 'Mercedes',
+    winner: 'Lando Norris', team: 'McLaren',
   },
   {
     id: 'f1-09', name: 'Gran Premio de Gran Bretaña', circuit: 'Silverstone Circuit',
     date: '2026-07-05', category: 'F1', status: 'past',
-    winner: 'Charles Leclerc', team: 'Ferrari',
+    winner: 'George Russell', team: 'Mercedes',
   },
   {
     id: 'f1-10', name: 'Gran Premio de Bélgica', circuit: 'Circuit de Spa-Francorchamps',
