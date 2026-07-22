@@ -4,7 +4,7 @@ import Paywall from './Paywall.jsx'
 export default function ProtectedRoute({ children, requiredProfile = 'Premium' }) {
   const { profile } = useAuth()
 
-  const profiles = { Gratuito: 0, Premium: 1 }
+  const profiles = { Gratuito: 0, Premium: 1, Administrador: 2 }
   if (profiles[profile] >= profiles[requiredProfile]) return children
 
   return <Paywall onBack={() => window.history.back()} />

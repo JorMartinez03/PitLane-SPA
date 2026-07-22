@@ -4,7 +4,7 @@ import { encrypt, decrypt, isValidAdminKey, hashKey } from '../utils/crypto.js'
 
 const AUTH_KEY = 'pitlane_session'
 const ADMIN_KEY = 'pitlane_admin'
-const ADMIN_SECRET = 'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6'
+const ADMIN_SECRET = '12345678909876543212345678909876'
 
 const AuthContext = createContext(null)
 
@@ -83,15 +83,21 @@ export function AuthProvider({ children }) {
     return null
   }, [])
 
-  const setProfile = useCallback((profile) => {
+  const setProfile = useCallback((profile, key) => {
     if (profile === 'Gratuito') {
       localStorage.removeItem(AUTH_KEY)
       setUser({ profile: 'Gratuito', authed: false })
-      return
+      return null
+    }
+    if (profile === 'Administrador') {
+      if (key !== ADMIN_SECRET) {
+        return { success: false, error: 'Clave de administrador inválida' }
+      }
     }
     const session = encodeSession(profile)
     localStorage.setItem(AUTH_KEY, session)
     setUser({ profile, authed: true })
+    return null
   }, [])
 
   const logout = useCallback(() => {

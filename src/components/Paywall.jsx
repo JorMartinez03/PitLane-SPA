@@ -1,7 +1,21 @@
+import { useState } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 
 export default function Paywall({ onBack }) {
   const { setProfile } = useAuth()
+  const [showAdminKey, setShowAdminKey] = useState(false)
+  const [adminKey, setAdminKey] = useState('')
+  const [keyError, setKeyError] = useState('')
+
+  const handleAdminUpgrade = () => {
+    const result = setProfile('Administrador', adminKey)
+    if (result && result.error) {
+      setKeyError(result.error)
+    } else {
+      setShowAdminKey(false)
+      setAdminKey('')
+    }
+  }
 
   return (
     <section className="flex items-center justify-center min-h-[60vh] px-4">
@@ -39,6 +53,46 @@ export default function Paywall({ onBack }) {
         >
           Adquirir Suscripción — Gratis
         </button>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-f1-gray/30"></div>
+          </div>
+          <div className="relative flex justify-center text-xs">
+            <span className="px-2 bg-f1-carbon text-f1-silver/50">o</span>
+          </div>
+        </div>
+
+        {!showAdminKey ? (
+          <button
+            onClick={() => setShowAdminKey(true)}
+            className="w-full px-6 py-3 rounded-xl border border-yellow-400/30 text-yellow-400 font-bold text-sm tracking-wider hover:bg-yellow-400/10 transition-colors cursor-pointer"
+          >
+            Acceso de Administrador
+          </button>
+        ) : (
+          <div className="space-y-3">
+            <input
+              type="text"
+              value={adminKey}
+              onChange={(e) => { setAdminKey(e.target.value); setKeyError('') }}
+              placeholder="Clave de administrador (32 caracteres)"
+              maxLength={32}
+              className="w-full px-4 py-3 rounded-xl bg-f1-dark border border-f1-gray/50 text-white text-sm placeholder-f1-silver/40 focus:outline-none focus:border-yellow-400/50 transition-colors font-mono tracking-wider"
+              autoFocus
+              onKeyDown={(e) => { if (e.key === 'Enter') handleAdminUpgrade() }}
+            />
+            {keyError && (
+              <p className="text-red-400 text-xs text-center">{keyError}</p>
+            )}
+            <button
+              onClick={handleAdminUpgrade}
+              className="w-full px-6 py-3 rounded-xl bg-yellow-400 text-black font-bold text-sm tracking-wider hover:bg-yellow-400/90 transition-colors cursor-pointer"
+            >
+              Verificar Clave
+            </button>
+          </div>
+        )}
 
         <button
           onClick={onBack}

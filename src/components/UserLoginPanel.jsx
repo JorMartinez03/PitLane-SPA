@@ -4,15 +4,35 @@ import { useAuth } from '../context/AuthContext.jsx'
 const PROFILES = [
   { key: 'Gratuito', label: 'Gratuito', desc: 'Acceso básico al calendario', color: 'text-f1-silver' },
   { key: 'Premium', label: 'Premium', desc: 'Clasificaciones y notificaciones', color: 'text-f1-red' },
+  { key: 'Administrador', label: 'Administrador', desc: 'Control total del sistema', color: 'text-yellow-400' },
 ]
 
 export default function UserLoginPanel() {
   const { profile: currentProfile, setProfile, admin } = useAuth()
   const [open, setOpen] = useState(false)
+  const [showKeyModal, setShowKeyModal] = useState(false)
+  const [adminKey, setAdminKey] = useState('')
+  const [keyError, setKeyError] = useState('')
 
   const handleSelect = (key) => {
+    if (key === 'Administrador') {
+      setShowKeyModal(true)
+      setAdminKey('')
+      setKeyError('')
+      return
+    }
     setProfile(key)
     setOpen(false)
+  }
+
+  const handleAdminConfirm = () => {
+    const result = setProfile('Administrador', adminKey)
+    if (result && result.error) {
+      setKeyError(result.error)
+    } else {
+      setShowKeyModal(false)
+      setOpen(false)
+    }
   }
 
   return (
@@ -22,10 +42,10 @@ export default function UserLoginPanel() {
         className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-f1-carbon border border-f1-gray/50 hover:border-f1-red/50 transition-colors cursor-pointer"
       >
         <span className={`w-2 h-2 rounded-full ${
-          currentProfile === 'Premium' ? 'bg-f1-red' : 'bg-f1-gray'
+          currentProfile === 'Premium' ? 'bg-f1-red' : currentProfile === 'Administrador' ? 'bg-yellow-400' : 'bg-f1-gray'
         }`} />
         <span className={`text-[11px] font-bold uppercase tracking-wider ${
-          currentProfile === 'Premium' ? 'text-f1-red' : 'text-f1-silver'
+          currentProfile === 'Premium' ? 'text-f1-red' : currentProfile === 'Administrador' ? 'text-yellow-400' : 'text-f1-silver'
         }`}>
           {currentProfile}
         </span>
@@ -56,7 +76,7 @@ export default function UserLoginPanel() {
                     }`}
                   >
                     <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                      key === 'Premium' ? 'bg-f1-red' : 'bg-f1-gray'
+                      key === 'Premium' ? 'bg-f1-red' : key === 'Administrador' ? 'bg-yellow-400' : 'bg-f1-gray'
                     }`} />
                     <div className="flex-1 min-w-0">
                       <span className={`block text-sm font-bold ${isActive ? color : 'text-white/80'}`}>
@@ -84,6 +104,46 @@ export default function UserLoginPanel() {
                 </a>
               </div>
             )}
+          </div>
+        </>
+      )}
+
+      {showKeyModal && (
+        <>
+          <div className="fixed inset-0 z-[60] bg-black/70" onClick={() => setShowKeyModal(false)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] w-80 bg-f1-carbon rounded-2xl border border-f1-gray/50 shadow-2xl p-6 space-y-4">
+            <div className="text-center">
+              <span className="text-2xl">🔑</span>
+              <h3 className="text-white font-bold text-lg mt-2">Acceso Administrador</h3>
+              <p className="text-f1-silver text-xs mt-1">Ingrese la clave de 32 caracteres</p>
+            </div>
+            <input
+              type="text"
+              value={adminKey}
+              onChange={(e) => { setAdminKey(e.target.value); setKeyError('') }}
+              placeholder="Ingrese la clave de administrador"
+              maxLength={32}
+              className="w-full px-4 py-3 rounded-xl bg-f1-dark border border-f1-gray/50 text-white text-sm placeholder-f1-silver/40 focus:outline-none focus:border-yellow-400/50 transition-colors font-mono tracking-wider"
+              autoFocus
+              onKeyDown={(e) => { if (e.key === 'Enter') handleAdminConfirm() }}
+            />
+            {keyError && (
+              <p className="text-red-400 text-xs text-center">{keyError}</p>
+            )}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowKeyModal(false)}
+                className="flex-1 px-4 py-2.5 rounded-xl border border-f1-gray text-f1-silver text-sm font-medium hover:bg-white/5 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleAdminConfirm}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-yellow-400 text-black text-sm font-bold hover:bg-yellow-400/90 transition-colors"
+              >
+                Confirmar
+              </button>
+            </div>
           </div>
         </>
       )}
