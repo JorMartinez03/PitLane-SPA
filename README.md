@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/PitLane-v1.6-e10600?style=for-the-badge&labelColor=0f0f14">
-    <img alt="PitLane" src="https://img.shields.io/badge/PitLane-v1.6-e10600?style=for-the-badge&labelColor=0f0f14">
+    <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/PitLane-v1.7-e10600?style=for-the-badge&labelColor=0f0f14">
+    <img alt="PitLane" src="https://img.shields.io/badge/PitLane-v1.7-e10600?style=for-the-badge&labelColor=0f0f14">
   </picture>
 </p>
 
@@ -45,6 +45,7 @@ La interfaz esta inspirada en la estetica de Formula 1 con un tema oscuro de fib
 ### Funcionalidades Principales
 
 - **Calendarios publicos** de 7 categorias con fechas reales 2026
+- **API en tiempo real** de F1 via Jolpica (reemplaza datos estaticos con fallback local)
 - **Ajuste automatico de huso horario** del dispositivo del usuario
 - **Cuenta regresiva activa** con badge "En Vivo" al expirar
 - **Muro de pago (Paywall)** con Route Guard y redireccion segura
@@ -197,6 +198,8 @@ PitLane-SPA/
       useCalendar.js          Logica de calendario y filtrado
       useLiveRace.js          Simulacion de carrera en vivo
       useNotifications.js     Notificaciones Web Push nativas
+    services/
+      f1Api.js                Servicio API Jolpica F1 (calendario + resultados)
     utils/
       dateUtils.js            Manejo de fechas en zona local
       crypto.js               Encriptacion AES-128 + validacion admin key
@@ -235,13 +238,21 @@ PitLane-SPA/
 
 ## Escalabilidad
 
-### Migrar a API Real
+### API de F1 Integrada
 
-1. Reemplazar importacion estatica en `useCalendar.js` por `fetch()`
-2. Mantener el mismo esquema `{ id, name, circuit, date, category, winner, team }`
-3. Ningun componente visual requiere modificacion
+La categoria F1 utiliza la **Jolpica F1 API** (sucesora de Ergast) para obtener datos en tiempo real:
+- Endpoint: `https://api.jolpi.ca/ergast/f1/{year}.json`
+- Servicio: `src/services/f1Api.js`
+- Fallback automatico a datos locales si la API falla o no tiene datos de la temporada
+- Las demas categorias (F2, F3, IndyCar, NASCAR, WEC, MotoGP) mantienen datos estaticos
 
-### Agregar Categoria
+### Agregar Nuevas Categorias con API
+
+1. Crear servicio en `src/services/` (similar a `f1Api.js`)
+2. Modificar `useCalendar.js` para llamar al nuevo servicio por categoria
+3. Mantener fallback local en `src/data/races.js`
+
+### Agregar Categoria Estatica
 
 1. Agregar carreras a `src/data/races.js`
 2. Agregar clasificaciones a `src/data/standings.js`
@@ -250,10 +261,10 @@ PitLane-SPA/
 
 ### Mejoras Previstas
 
-- Migracion a API real de datos deportivos
 - Integracion pasarela de pagos real
 - Pruebas unitarias con Vitest
 - Zustand para estado persistente
+- APIs para F2, F3 y demas categorias
 
 <br />
 
@@ -278,7 +289,7 @@ PitLane-SPA/
 <br />
 
 <p align="center">
-  <sub>v1.6 &mdash; Junio 2026</sub>
+  <sub>v1.7 &mdash; Julio 2026</sub>
   <br />
   <sub>Este proyecto no esta afiliado a Formula 1 ni a la FIA.</sub>
 </p>

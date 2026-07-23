@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { parseLocalDate } from '../utils/dateUtils.js'
+import { fetchF1Calendar } from '../services/f1Api.js'
 import races from '../data/races.js'
 
 const SIMULATED_DELAY = 400
@@ -14,41 +15,63 @@ function computeStatus(dateStr) {
 }
 
 function enrichRaces(raw) {
-  return raw.map((r) => {
-    const liveStatus = computeStatus(r.date)
-    return {
-      ...r,
-      status: liveStatus,
-    }
-  })
+  return raw.map((r) => ({
+    ...r,
+    status: computeStatus(r.date),
+  }))
 }
 
-const allRaces = enrichRaces(races)
+const localRaces = enrichRaces(races)
 
 export default function useCalendar(initialCategory = 'F1') {
   const [state, setState] = useState({
     races: [],
     loading: true,
     activeCategory: initialCategory,
+    source: 'local',
   })
 
   useEffect(() => {
     let cancelled = false
+    let timer = null
 
-    const timer = setTimeout(() => {
-      if (cancelled) return
-      setState((prev) => ({
-        ...prev,
-        races: allRaces,
-        loading: false,
-      }))
-    }, SIMULATED_DELAY)
+    async function load() {
+      if (initialCategory === 'F1') {
+        try {
+          const apiRaces = await fetchF1Calendar()
+          if (cancelled) return
+          if (apiRaces.length > 0) {
+            setState((prev) => ({
+              ...prev,
+              races: enrichRaces(apiRaces),
+              loading: false,
+              source: 'api',
+            }))
+            return
+          }
+        } catch {
+          // Fallback to local data
+        }
+      }
+
+      timer = setTimeout(() => {
+        if (cancelled) return
+        setState((prev) => ({
+          ...prev,
+          races: localRaces,
+          loading: false,
+          source: 'local',
+        }))
+      }, SIMULATED_DELAY)
+    }
+
+    load()
 
     return () => {
       cancelled = true
-      clearTimeout(timer)
+      if (timer) clearTimeout(timer)
     }
-  }, [])
+  }, [initialCategory])
 
   const setActiveCategory = useCallback((category) => {
     setState((prev) => ({ ...prev, activeCategory: category }))
@@ -81,5 +104,6 @@ export default function useCalendar(initialCategory = 'F1') {
     nextRace,
     pastRaces,
     upcomingRaces,
+    source: state.source,
   }
 }
